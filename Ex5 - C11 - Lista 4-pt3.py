@@ -1,11 +1,17 @@
-import pandas as pd
+import numpy as np
 
-df = pd.read_csv("space.csv", delimiter=";")
-df.columns = [c.strip() for c in df.columns]
+ds = np.loadtxt("space.csv", delimiter=";", dtype=str, encoding="utf-8")
+colunas = [c.strip() for c in ds[0]]
+idx_datum = colunas.index("Datum")
 
-ano = df["Datum"].str[-4:]
-df["Ano"] = ano
-mais_lancamentos = df["Ano"].value_counts().idxmax()
-qtd_lancamentos = df["Ano"].value_counts().max()
+datas = np.char.strip(ds[1:, idx_datum])
+anos = np.char.strip(datas)[-4:] if datas.size == 1 else np.char.strip(datas).view(np.chararray)[:, -4:]
+anos = np.char.strip(datas).astype(str)
+anos = np.char.substr(anos, len(anos[0])-4, 4)
 
-print(f"Ano com mais lançamentos: {mais_lancamentos} ({qtd_lancamentos} lançamentos)")
+valores, contagens = np.unique(anos, return_counts=True)
+idx_max = np.argmax(contagens)
+ano_mais_lancamentos = valores[idx_max]
+qtd_lancamentos = contagens[idx_max]
+
+print(f"Ano com mais lançamentos: {ano_mais_lancamentos} ({qtd_lancamentos} lançamentos)")

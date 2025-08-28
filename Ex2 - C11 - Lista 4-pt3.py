@@ -1,9 +1,19 @@
-import pandas as pd
+import numpy as np
 
-df = pd.read_csv("space.csv", delimiter=";")
-df.columns = [c.strip() for c in df.columns]
 
-df["Cost"] = pd.to_numeric(df["Cost"], errors="coerce")
-media_gastos = df[df["Cost"] > 0]["Cost"].mean()
+ds = np.loadtxt("space.csv", delimiter=";", dtype=str, encoding="utf-8")
 
-print(f"Média de gastos das missões com valores disponíveis: {media_gastos:.2f} milhões")
+colunas = [c.strip() for c in ds[0]]
+
+
+idx_status = colunas.index("Status Mission")
+
+status_missoes = np.char.strip(ds[1:, idx_status])
+
+missoes_sucesso = np.sum(status_missoes == "Success")
+
+total_missoes = status_missoes.size
+
+percentual_sucesso = (missoes_sucesso / total_missoes) * 100
+
+print(f"Percentual de missões bem-sucedidas: {percentual_sucesso:.2f}%")

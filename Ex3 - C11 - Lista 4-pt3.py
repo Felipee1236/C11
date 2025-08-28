@@ -1,9 +1,15 @@
-import pandas as pd
+import numpy as np
 
-df = pd.read_csv("space.csv", delimiter=";")
-df.columns = [c.strip() for c in df.columns]
+ds = np.loadtxt("space.csv", delimiter=";", dtype=str, encoding="utf-8")
+colunas = [c.strip() for c in ds[0]]
+idx_empresa = colunas.index("Company Name")
 
-empresa_mais_missoes = df["Company Name"].value_counts().idxmax()
-qtd_missoes = df["Company Name"].value_counts().max()
+empresas = ds[1:, idx_empresa]
+empresas = np.char.strip(empresas)
+
+valores, contagens = np.unique(empresas, return_counts=True)
+idx_max = np.argmax(contagens)
+empresa_mais_missoes = valores[idx_max]
+qtd_missoes = contagens[idx_max]
 
 print(f"Empresa com mais missões: {empresa_mais_missoes} ({qtd_missoes} missões)")
